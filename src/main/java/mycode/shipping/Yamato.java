@@ -3,10 +3,12 @@ package mycode.shipping;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static mycode.shipping.Shipping.detailMap;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,6 +23,7 @@ public class Yamato extends Shipping {
         questionStatus = Arrays.asList(new String[]{"調査中（ご不在）", "調査中（転居先不明）", "持戻（ポスト投函不可）", "持戻（住所不明）", "調査中", "持戻（転居）"});
         progressStatus = Arrays.asList(new String[]{"作業店通過", "依頼受付（再配達）", "持戻", "持戻（ご不在）", "持戻（休業）", "配達中", "配達予定", "配達店到着", "配達日・時間帯指定（保管中）", "保管中", "投函予定", "発送", "依頼受付（日・時間帯変更）", "ご来店予定（保管中）", "保管中（ご指定店）"});
         statusList = Collections.synchronizedList(new ArrayList());
+        detailMap = Collections.synchronizedMap(new TreeMap<String, String>());
         detailSet = Collections.synchronizedSet(new TreeSet<String>());
     }
 
@@ -106,10 +109,10 @@ public class Yamato extends Shipping {
                         }
                     }
                     detailSet.add(denpyo + "\t" + status + "\t" + day + "\t" + new String(sb).replaceFirst("^(発送→|投函予定→|荷物受付→)+", "").replaceAll("(作業店通過→)+", "作業店通過→").replaceFirst("(→返品|→投函予定)+$", ""));
-                    detailMap.put(denpyo, status + "\t" + day);
+                    detailMap.put(denpyo.replace("-", ""), status + "\t" + day);
                 } else {
                     detailSet.add(denpyo + "\t" + status + "\t" + day + "\t");
-                    detailMap.put(denpyo, status + "\t" + day);
+                    detailMap.put(denpyo.replace("-", ""), status + "\t" + day);
                 }
             }
             semaphore.release();
