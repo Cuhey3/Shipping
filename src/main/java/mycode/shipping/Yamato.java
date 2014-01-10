@@ -106,8 +106,10 @@ public class Yamato extends Shipping {
                         }
                     }
                     detailSet.add(denpyo + "\t" + status + "\t" + day + "\t" + new String(sb).replaceFirst("^(発送→|投函予定→|荷物受付→)+", "").replaceAll("(作業店通過→)+", "作業店通過→").replaceFirst("(→返品|→投函予定)+$", ""));
+                    detailMap.put(denpyo, status + "\t" + day);
                 } else {
                     detailSet.add(denpyo + "\t" + status + "\t" + day + "\t");
+                    detailMap.put(denpyo, status + "\t" + day);
                 }
             }
             semaphore.release();
